@@ -37,10 +37,12 @@ export async function loadHistoricalDataWithLivePrices(): Promise<AssetData> {
     // Clone the historical data arrays
     const goldDataWithLive = [...(goldData as DataPoint[])];
     const silverDataWithLive = [...(silverData as DataPoint[])];
+    const stocksDataWithLive = [...(sp500Data as DataPoint[])];
 
     // Check if we already have data for today
     const hasGoldToday = goldDataWithLive.some(d => d.date === today);
     const hasSilverToday = silverDataWithLive.some(d => d.date === today);
+    const hasStocksToday = stocksDataWithLive.some(d => d.date === today);
 
     // Append live prices if we don't have them yet
     if (!hasGoldToday) {
@@ -69,9 +71,25 @@ export async function loadHistoricalDataWithLivePrices(): Promise<AssetData> {
       }
     }
 
+    // Add S&P 500 live price if available
+    if (livePrices.sp500) {
+      if (!hasStocksToday) {
+        stocksDataWithLive.push({
+          date: today,
+          price: livePrices.sp500,
+        });
+      } else {
+        // Update today's price if it exists
+        const stocksIndex = stocksDataWithLive.findIndex(d => d.date === today);
+        if (stocksIndex !== -1) {
+          stocksDataWithLive[stocksIndex].price = livePrices.sp500;
+        }
+      }
+    }
+
     return {
       gold: goldDataWithLive,
-      stocks: sp500Data as DataPoint[],
+      stocks: stocksDataWithLive,
       silver: silverDataWithLive,
       cpi: cpiData as DataPoint[],
     };

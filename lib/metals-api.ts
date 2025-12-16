@@ -18,6 +18,7 @@ export interface MetalsApiResponse {
 export interface LiveMetalPrices {
   gold: number; // USD per troy ounce
   silver: number; // USD per troy ounce
+  sp500?: number; // S&P 500 index value
   timestamp: number;
   date: string;
 }
@@ -59,6 +60,48 @@ export async function fetchLiveMetalPrices(apiKey: string): Promise<LiveMetalPri
     timestamp: data.timestamp,
     date: data.date,
   };
+}
+
+/**
+ * Fetch live S&P 500 Total Return Index price
+ * Calculates based on price index growth from last known Total Return value
+ */
+export async function fetchLiveSP500Price(): Promise<number> {
+  try {
+    // Fetch current S&P 500 Price Index
+    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=1d';
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Yahoo Finance API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const result = data?.chart?.result?.[0];
+    const meta = result?.meta;
+
+    if (!meta?.regularMarketPrice) {
+      throw new Error('Unable to extract S&P 500 price from response');
+    }
+
+    const currentPriceIndex = meta.regularMarketPrice;
+
+    // Historical reference point (December 2024):
+    // - Total Return Index: 20891.88 (from historical data)
+    // - Price Index: approximately 5985 (market close Dec 2024)
+    const referenceDate = '2024-12-01';
+    const referenceTotalReturn = 20891.88;
+    const referencePriceIndex = 5985; // Approximate S&P 500 price index value for Dec 2024
+
+    // Calculate today's Total Return Index by applying the same growth rate
+    const growthFactor = currentPriceIndex / referencePriceIndex;
+    const estimatedTotalReturn = referenceTotalReturn * growthFactor;
+
+    return estimatedTotalReturn;
+  } catch (error) {
+    console.error('Error fetching S&P 500 Total Return price:', error);
+    throw error;
+  }
 }
 
 /**
