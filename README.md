@@ -237,3 +237,4 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 **⚠️ Educational Tool Only**: This is not financial advice. Consult a professional advisor before making investment decisions.
 
 **Last Updated**: December 2024
+
