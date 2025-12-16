@@ -208,8 +208,6 @@ export function calculateAssetPerformance(
     cagr: calculateCAGR(initialInvestment, finalValue, exactYears),
     volatility: calculateVolatility(pricesInRange),
     maxDrawdown: calculateMaxDrawdown(pricesInRange),
-    startDate: startPoint.date,
-    endDate: endPoint.date,
   };
 }
 

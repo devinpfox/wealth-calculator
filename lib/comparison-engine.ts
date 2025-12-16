@@ -100,9 +100,9 @@ function generateChartData(
   startDate: string,
   endDate: string,
   selectedAssets: AssetType[],
-  historicalData: ReturnType<typeof loadHistoricalData>,
+  historicalData: Awaited<ReturnType<typeof loadHistoricalDataWithLivePrices>>,
   projections: ReturnType<typeof generateAssetProjection>[],
-  cpiData?: ReturnType<typeof loadHistoricalData>['cpi']
+  cpiData?: Awaited<ReturnType<typeof loadHistoricalDataWithLivePrices>>['cpi']
 ): ChartDataPoint[] {
   const chartData: ChartDataPoint[] = [];
 

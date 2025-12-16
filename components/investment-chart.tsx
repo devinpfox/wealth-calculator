@@ -36,9 +36,9 @@ export function InvestmentChart({
   const goldGap = goldFinalValue - stocksFinalValue;
   const silverGap = silverFinalValue - stocksFinalValue;
 
-  // Get start year from performance data
-  const startYear = stocksPerf?.startDate
-    ? new Date(stocksPerf.startDate).getFullYear()
+  // Get start year from chart data
+  const startYear = data.length > 0
+    ? new Date(data[0].date).getFullYear()
     : new Date().getFullYear();
 
   const formatCurrencyFull = (value: number) => {
